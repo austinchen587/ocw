@@ -45,8 +45,6 @@ def choose_word(wordlist):
 # Load the list of words to be accessed from anywhere in the program
 wordlist = load_words()
 
-print(wordlist)
-
 def has_player_won(secret_word, letters_guessed):
     """
     secret_word: string, the lowercase word the user is guessing
@@ -56,9 +54,11 @@ def has_player_won(secret_word, letters_guessed):
     returns: boolean, True if all the letters of secret_word are in letters_guessed,
         False otherwise
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    for i in secret_word:
+        if i not in letters_guessed:
+            return False
 
+    return True
 
 def get_word_progress(secret_word, letters_guessed):
     """
@@ -69,8 +69,15 @@ def get_word_progress(secret_word, letters_guessed):
     returns: string, comprised of letters and asterisks (*) that represents
         which letters in secret_word have not been guessed so far
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    string = ''
+
+    for i in secret_word:
+            if i in letters_guessed:
+                string += i
+            else:
+                string += "*"
+    
+    return string
 
 
 def get_available_letters(letters_guessed):
@@ -82,9 +89,15 @@ def get_available_letters(letters_guessed):
       letters have not yet been guessed. The letters should be returned in
       alphabetical order
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    alphabetical = string.ascii_lowercase
 
+    for i in letters_guessed:
+        if i in alphabetical:
+            alphabetical = alphabetical.replace(i,"")
+    
+    return alphabetical
+    
+  
 
 
 def hangman(secret_word, with_help):
@@ -126,8 +139,41 @@ def hangman(secret_word, with_help):
 
     Follows the other limitations detailed in the problem write-up.
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    time = 10
+    letters_guessed = ""
+    alphabetical = get_available_letters(letters_guessed)
+    string = get_word_progress(secret_word,letters_guessed)
+
+    print("Welcome to Hangman!")
+ 
+    print(f'I am thinking of a word that is {len(secret_word)} letters long. ')
+
+    while time>0:
+        print("-" * 60)
+        
+        print(f'Available letters : {alphabetical}')
+        print(f"You have {time} guesses left.")
+        letter = input("Enter an letter: ")
+
+        while letter not in alphabetical:
+            print(f"Oops! That is not valid letter. Please input a letter from : {alphabetical}")
+            letter = input("Enter an letter:") 
+
+        letters_guessed = letters_guessed + letter
+        string = get_word_progress(secret_word,letters_guessed)
+
+        alphabetical = get_available_letters(letters_guessed)
+
+        if letter not in secret_word:
+            print(f'Oops! That letter is not in my word: {string}')
+            time -= 1
+        else:
+            print(f"Good guess: {string}")
+            if has_player_won(secret_word,letters_guessed):
+                print("Congratulations, you won!")
+                break
+
+    print(f"Sorry, you ran out of guesses. The word was {secret_word}.")
 
 
 
@@ -137,9 +183,9 @@ def hangman(secret_word, with_help):
 if __name__ == "__main__":
     # To test your game, uncomment the following three lines.
 
-    # secret_word = choose_word(wordlist)
-    # with_help = False
-    # hangman(secret_word, with_help)
+    secret_word = choose_word(wordlist)
+    with_help = False
+    hangman(secret_word, with_help)
 
     # After you complete with_help functionality, change with_help to True
     # and try entering "!" as a guess!
