@@ -1,13 +1,15 @@
-import string
+import random, string
 
-letters =string.ascii_lowercase
+string = "*pp*"
+help = ""
 
 word = "apple"
 
 for i in word:
-    if i not in letters:
-        letters = letters
-    else:
-        letters = letters.replace(i,"")
+    if i not in string:
+        help += i
 
-print(letters)
+print(help)
+result = random.choice(help)
+
+print(result)

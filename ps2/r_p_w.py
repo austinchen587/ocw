@@ -48,58 +48,84 @@ def get_available_letters(letters_guessed):
 def hangman(secret_word, with_help):
     time = 10
     letters_guessed = ""
-    alphabetical = get_available_letters(letters_guessed)
-    string = get_word_progress(secret_word,letters_guessed)
-    letter_help = ""
+    print("Welcome to Hangman! ")
+    vowels = ['a', 'e', 'i', 'o', 'u']
 
-    print("Welcome to Hangman!")
- 
-    print(f'I am thinking of a word that is {len(secret_word)} letters long. ')
+    print(f"I am thinking of a word that is {len(secret_word)} letters long.")
 
-    while time>0:
-        print("-" * 60)
-        
-        print(f'Available letters : {alphabetical}')
-        print(f"You have {time} guesses left.")
-        letter = input("Enter an letter: ")
-
-        while letter not in alphabetical:
-            if letter != "!":
-                print(f"Oops! That is not valid letter. Please input a letter from : {alphabetical}")
-                letter = input("Enter an letter:") 
-            else:
-                for n in secret_word:
-                    if n not in string:
-                        letter_help += n 
-
-                letters_guessed = letters_guessed + random.choice(letter_help)
-                alphabetical = get_available_letters(letters_guessed)
-                string = get_word_progress(secret_word,letters_guessed)
-                print(f"Letter revealed: {string}")
-
-
-        letters_guessed = letters_guessed + letter
+    while time > 0 :
+        alphabetical = get_available_letters(letters_guessed)
         string = get_word_progress(secret_word,letters_guessed)
 
-        alphabetical = get_available_letters(letters_guessed)
+        print("-" * 60)
+
+        print(f"Available letters : {alphabetical}")
+        print(f"You have {time} guesses left. ")
+        letter = input("Enter an letter: ")
+
+        if with_help and letter == "!":
+            if time < 3:
+                print("Oops! Not enough guesses left to use help.")
+                continue
+
+            unrevealed = [ch for ch in secret_word if ch not in letters_guessed]
+            if unrevealed:
+                chosen = random.choice(unrevealed)
+                letters_guessed += chosen
+                time -= 3
+
+                string = get_word_progress(secret_word,letters_guessed)
+                print(f"Letter revealed: {chosen}")
+
+
+                if has_player_won(secret_word,letters_guessed):
+                    print("Congratulations, you won!")
+                    print(f"Your total socre for this game is : {(time+4*len(set(secret_word)))+(3+len(secret_word))}")
+                    return
+            continue
+
+        while letter not in alphabetical:
+            print(f"Oops! That is not valid letter. Please input a letter from : {alphabetical}")
+            print("-" * 60)
+            print(f"You have {time} guesses left. ")
+            letter = input("Enter an letter: ")
+            if with_help and letter == "!":
+                break
+
+        if letter == "!":
+            continue
+
+
+        letters_guessed += letter
+        string = get_word_progress(secret_word,letters_guessed)
+
 
         if letter not in secret_word:
-            print(f'Oops! That letter is not in my word: {string}')
-            time -= 1
+            print(f"Oops! That letter is not in my word: {string}")
+            if letter not in vowels :
+                time -= 1
+            else:
+                time -= 2
         else:
             print(f"Good guess: {string}")
             if has_player_won(secret_word,letters_guessed):
                 print("Congratulations, you won!")
-                break
+                print(f"Your total socre for this game is : {(time+4*len(set(secret_word)))+(3+len(secret_word))}")
+                return
 
     print(f"Sorry, you ran out of guesses. The word was {secret_word}.")
 
 
+           
+
         
 
 if __name__ == "__main__":
-    secret_word = "ad"
+    #secret_word = choose_word(wordlist)
+    secret_word = "apple"
+
     #letters_guessed = []
     #time = 10
+    with_help = True
     
-    hangman(secret_word)
+    hangman(secret_word,with_help)
